@@ -26,6 +26,7 @@ import uk.co.real_logic.artio.FixGatewayException;
 import uk.co.real_logic.artio.GatewayProcess;
 import uk.co.real_logic.artio.Reply;
 import uk.co.real_logic.artio.messages.SessionReplyStatus;
+import uk.co.real_logic.artio.protocol.ITraceEventLogger;
 import uk.co.real_logic.artio.session.Session;
 import uk.co.real_logic.artio.timing.LibraryTimers;
 
@@ -55,7 +56,7 @@ public class FixLibrary extends GatewayProcess
     private final LibraryPoller poller;
     private boolean isPolling = false;
 
-
+    public static ITraceEventLogger eventLogger;
 
     FixLibrary(final LibraryConfiguration configuration)
     {

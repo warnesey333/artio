@@ -416,6 +416,28 @@ public class Session implements AutoCloseable
         return send(asciiBuffer, offset, length, sentSeqNum, encoder.messageType());
     }
 
+    public long send(final Encoder encoder, final long eventId)
+    {
+        validateCanSendMessage();
+
+        final int sentSeqNum = newSentSeqNum();
+        final HeaderEncoder header = (HeaderEncoder)encoder.header();
+        header
+                .msgSeqNum(sentSeqNum)
+                .sendingTime(timestampEncoder.buffer(), timestampEncoder.encode(time()));
+
+        if (!header.hasSenderCompID())
+        {
+            sessionIdStrategy.setupSession(sessionKey, header);
+        }
+
+        final long result = encoder.encode(asciiBuffer, 0);
+        final int length = Encoder.length(result);
+        final int offset = Encoder.offset(result);
+
+        return send(asciiBuffer, offset, length, sentSeqNum, encoder.messageType(), eventId);
+    }
+
     /**
      * Send a message on this session.
      *
@@ -428,12 +450,14 @@ public class Session implements AutoCloseable
      * number indicating an error status.
      */
     public long send(
-        final DirectBuffer messageBuffer, final int offset, final int length, final int seqNum, final int messageType)
+        final DirectBuffer messageBuffer, final int offset, final int length, final int seqNum,
+        final int messageType, final long eventId)
     {
         validateCanSendMessage();
 
         final long position = publication.saveMessage(
-            messageBuffer, offset, length, libraryId, messageType, id(), sequenceIndex(), connectionId, OK, seqNum);
+            messageBuffer, offset, length, libraryId, messageType, id(),
+            sequenceIndex(), connectionId, OK, seqNum, eventId);
 
         if (position > 0)
         {
@@ -441,6 +465,13 @@ public class Session implements AutoCloseable
         }
 
         return position;
+    }
+
+    public long send(
+        final DirectBuffer messageBuffer, final int offset, final int length,
+        final int seqNum, final int messageType)
+    {
+        return send(messageBuffer, offset, length, seqNum, messageType, 0L);
     }
 
     /**
