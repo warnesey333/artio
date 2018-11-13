@@ -147,7 +147,7 @@ public class Indexer implements Agent, ControlledFragmentHandler
             aeronSessionId);
         for (int i = 0; i < indices.size(); i++)
         {
-            index.onFragment(buffer, offset, length, header);
+            indices.get(i).onFragment(buffer, offset, length, header);
         }
 
         return CONTINUE;
