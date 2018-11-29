@@ -125,9 +125,6 @@ public class GatewayPublication extends ClaimablePublication
         final MessageStatus status,
         final int sequenceNumber)
     {
-<<<<<<< HEAD
-        final BufferClaim bufferClaim = this.bufferClaim;
-=======
         return saveMessage(srcBuffer, srcOffset, srcLength, libraryId, messageType,
                 sessionId, sequenceIndex, connectionId, status, sequenceNumber, 0L);
     }
@@ -145,8 +142,7 @@ public class GatewayPublication extends ClaimablePublication
         final int sequenceNumber,
         final long eventId)
     {
-        final ExclusiveBufferClaim bufferClaim = this.bufferClaim;
->>>>>>> TS-5748-artio
+	    final BufferClaim bufferClaim = this.bufferClaim;
         final long timestamp = clock.time();
         final int framedLength = FRAMED_MESSAGE_SIZE + srcLength;
         final boolean fragmented = framedLength > maxPayloadLength;
